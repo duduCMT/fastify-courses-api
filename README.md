@@ -1,3 +1,5 @@
+# Courses API
+
 ## Technologies
 
 - NodeJS

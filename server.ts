@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === "development") {
   server.register(fastifySwagger, {
     openapi: {
       info: {
-        title: "NodeJS API Challange",
+        title: "Courses API",
         version: "1.0.0",
       },
     },
