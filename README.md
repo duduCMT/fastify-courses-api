@@ -26,7 +26,7 @@ npx tsc --init
 
 Using the [tsconfig/bases repository](https://github.com/tsconfig/bases), find the NodeJS version that corresponds to the projecto. In this case, [tsconfig Node 22](https://github.com/tsconfig/bases/blob/main/bases/node22.json).
 
-## Run Docker with Postgres
+### Run Docker with Postgres
 
 To run with the terminal open
 
@@ -45,6 +45,8 @@ To see which Docker containers are running, simply use the command:
 ```bash
 docker ps
 ```
+
+### Database with Drizzle
 
 To generete database files from drizzle, run:
 
