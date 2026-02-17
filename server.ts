@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import { fastifySwagger } from "@fastify/swagger";
-import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import scalarAPIReference from "@scalar/fastify-api-reference";
 
 import {
   validatorCompiler,
@@ -25,19 +25,21 @@ const server = fastify({
   },
 }).withTypeProvider<ZodTypeProvider>();
 
-server.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: "NodeJS API Challange",
-      version: "1.0.0",
+if (process.env.NODE_ENV === "development") {
+  server.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: "NodeJS API Challange",
+        version: "1.0.0",
+      },
     },
-  },
-  transform: jsonSchemaTransform,
-});
+    transform: jsonSchemaTransform,
+  });
 
-server.register(fastifySwaggerUi, {
-  routePrefix: "/docs",
-});
+  server.register(scalarAPIReference, {
+    routePrefix: "/docs",
+  });
+}
 
 server.setSerializerCompiler(serializerCompiler);
 server.setValidatorCompiler(validatorCompiler);

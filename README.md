@@ -7,7 +7,7 @@
 - PostgreSQL (Database)
 - Drizzle (ORM)
 - Zod (Type validation)
-- @fastify/swagger-ui (API auto doc)
+- @scalar/fastify-api-reference (API auto doc)
 
 ## Support Tools
 

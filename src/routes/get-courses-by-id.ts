@@ -37,7 +37,7 @@ export const getCourseByIdRoute: FastifyPluginAsyncZod = async (server) => {
         return reply.send({ course: result[0] });
       }
 
-      return reply.code(404).send();
+      return reply.code(404).send(null);
     },
   );
 };
