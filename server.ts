@@ -1,8 +1,17 @@
 import fastify from "fastify";
-import { eq } from "drizzle-orm";
+import { fastifySwagger } from "@fastify/swagger";
+import { fastifySwaggerUi } from "@fastify/swagger-ui";
 
-import { db } from "./src/database/client.ts";
-import { courses } from "./src/database/schema.ts";
+import {
+  validatorCompiler,
+  serializerCompiler,
+  jsonSchemaTransform,
+  type ZodTypeProvider,
+} from "fastify-type-provider-zod";
+
+import { createCourseRoute } from "./src/routes/create-course.ts";
+import { getCoursesRoute } from "./src/routes/get-courses.ts";
+import { getCourseByIdRoute } from "./src/routes/get-courses-by-id.ts";
 
 const server = fastify({
   logger: {
@@ -14,60 +23,28 @@ const server = fastify({
       },
     },
   },
+}).withTypeProvider<ZodTypeProvider>();
+
+server.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "NodeJS API Challange",
+      version: "1.0.0",
+    },
+  },
+  transform: jsonSchemaTransform,
 });
 
-server.get("/courses", async (request, reply) => {
-  const result = await db
-    .select({
-      id: courses.id,
-      title: courses.title,
-    })
-    .from(courses);
-  return reply.send({ courses: result });
+server.register(fastifySwaggerUi, {
+  routePrefix: "/docs",
 });
 
-server.get("/courses/:id", async (request, reply) => {
-  type Params = {
-    id: string;
-  };
+server.setSerializerCompiler(serializerCompiler);
+server.setValidatorCompiler(validatorCompiler);
 
-  const params = request.params as Params;
-  const courseId = params.id;
-
-  const result = await db
-    .select()
-    .from(courses)
-    .where(eq(courses.id, courseId));
-
-  if (result.length > 0) {
-    return { course: result[0] };
-  }
-
-  return reply.code(404).send();
-});
-
-server.post("/courses", async (request, reply) => {
-  type Body = {
-    title?: string;
-    description?: string;
-  };
-
-  const body = request.body as Body;
-
-  if (!body.title) {
-    return reply.status(400).send({ message: "Título obrigatório." });
-  }
-
-  const result = await db
-    .insert(courses)
-    .values({
-      title: body.title,
-      description: body.description,
-    })
-    .returning();
-
-  return reply.status(401).send({ id: result[0].id });
-});
+server.register(getCoursesRoute);
+server.register(getCourseByIdRoute);
+server.register(createCourseRoute);
 
 server.listen({ port: 3333 }).then(() => {
   console.log("HHTP server running!");

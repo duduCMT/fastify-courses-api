@@ -4,8 +4,10 @@
 - Typescript
 - Docker
 - Fastify (API)
-- PostgreSQL (Data Base)
+- PostgreSQL (Database)
 - Drizzle (ORM)
+- Zod (Type validation)
+- @fastify/swagger-ui (API auto doc)
 
 ## Support Tools
 
@@ -27,7 +29,7 @@ Using the [tsconfig/bases repository](https://github.com/tsconfig/bases), find t
 To run with the terminal open
 
 ```bash
-docker compose up 
+docker compose up
 ```
 
 To run with the terminal close
