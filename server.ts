@@ -1,51 +1,74 @@
 import fastify from "fastify";
-import crypto from "node:crypto";
+import { eq } from "drizzle-orm";
+
+import { db } from "./src/database/client.ts";
+import { courses } from "./src/database/schema.ts";
 
 const server = fastify({
   logger: {
     transport: {
-      target: 'pino-pretty',
+      target: "pino-pretty",
       options: {
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname',
+        translateTime: "HH:MM:ss Z",
+        ignore: "pid,hostname",
       },
     },
   },
 });
 
-const courses = [
-  { id: '1', title: 'Curso de Node.JS' },
-  { id: '2', title: 'Curso de React' },
-  { id: '3', title: 'Curso de React Native' },
-];
-
-server.get('/courses', () => {
-  return { courses };
+server.get("/courses", async (request, reply) => {
+  const result = await db
+    .select({
+      id: courses.id,
+      title: courses.title,
+    })
+    .from(courses);
+  return reply.send({ courses: result });
 });
 
-server.post('/courses', (request, reply) => {
-  const courseId = crypto.randomUUID();
-  const courseTitle = request.body.title;
+server.get("/courses/:id", async (request, reply) => {
+  type Params = {
+    id: string;
+  };
 
-  if(!courseTitle) {
+  const params = request.params as Params;
+  const courseId = params.id;
+
+  const result = await db
+    .select()
+    .from(courses)
+    .where(eq(courses.id, courseId));
+
+  if (result.length > 0) {
+    return { course: result[0] };
+  }
+
+  return reply.code(404).send();
+});
+
+server.post("/courses", async (request, reply) => {
+  type Body = {
+    title?: string;
+    description?: string;
+  };
+
+  const body = request.body as Body;
+
+  if (!body.title) {
     return reply.status(400).send({ message: "Título obrigatório." });
   }
 
-  courses.push({ id: courseId, title: courseTitle });
-  return reply.status(401).send({ courseId });
+  const result = await db
+    .insert(courses)
+    .values({
+      title: body.title,
+      description: body.description,
+    })
+    .returning();
+
+  return reply.status(401).send({ id: result[0].id });
 });
 
-server.get('/courses/:id', (request, reply) => {
-  const courseId = request.params.id;
-  const course = courses.find(({ id }) => id === courseId);
-
-  if (course) {
-    return { course };
-  }  
-
-  return reply.code(404).send();
-})
-
 server.listen({ port: 3333 }).then(() => {
-  console.log("HHTP server running!") 
+  console.log("HHTP server running!");
 });

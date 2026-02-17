@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "node --watch server.ts",
+    "dev": "node --env-file .env --watch server.ts",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "db:generete": "drizzle-kit generate",
