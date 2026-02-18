@@ -46,6 +46,12 @@ To see which Docker containers are running, simply use the command:
 docker ps
 ```
 
+To stop docker container
+
+```bash
+docker compose stop
+```
+
 ### Database with Drizzle
 
 To generete database files from drizzle, run:

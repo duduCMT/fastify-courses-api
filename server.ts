@@ -9,9 +9,9 @@ import {
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 
-import { createCourseRoute } from "./src/routes/create-course.ts";
-import { getCoursesRoute } from "./src/routes/get-courses.ts";
-import { getCourseByIdRoute } from "./src/routes/get-courses-by-id.ts";
+import { createCourseRoute } from "./src/routes/courses/create-course/create-course.route.ts";
+import { getCourseByIdRoute } from "./src/routes/courses/get-course-by-id/get-course-by-id.route.ts";
+import { getCoursesRoute } from "./src/routes/courses/get-courses/get-courses.route.ts";
 
 const server = fastify({
   logger: {
